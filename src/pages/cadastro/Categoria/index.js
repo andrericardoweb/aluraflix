@@ -4,34 +4,24 @@ import { Link } from 'react-router-dom';
 import PageDefault from '../../../components/PageDefault';
 import FormField from '../../../components/FormField';
 import Button from '../../../components/Button';
+import useForm from '../../../hooks/useForm';
 
 function CadastroCategoria() {
   const valoresIniciais = {
     nome: '',
     descricao: '',
-    cor: '#00A7FA',
+    cor: '',
   };
-  const [categorias, setCategorias] = useState(['']);
-  const [values, setValues] = useState(valoresIniciais);
 
-  function setValue(chave, valor) {
-    setValues({
-      ...values,
-      [chave]: valor,
-    });
-  }
+  const { handleChange, values, clearForm } = useForm(valoresIniciais);
 
-  function handleChange(infosDoEvento) {
-    setValue(
-      infosDoEvento.target.getAttribute('name'),
-      infosDoEvento.target.value,
-    );
-  }
+  const [categorias, setCategorias] = useState([]);
 
   useEffect(() => {
     const URL_TOP = window.location.hostname.includes('localhost')
-      ? 'http://localhost:8080/categorias' 
-      : 'https://arw-aluraflix.herokuapp.com/categorias';
+      ? 'http://localhost:8080/categorias'
+      : 'https://devsoutinhoflix.herokuapp.com/categorias';
+    // E a ju ama variáveis
     fetch(URL_TOP)
       .then(async (respostaDoServidor) => {
         const resposta = await respostaDoServidor.json();
@@ -39,6 +29,24 @@ function CadastroCategoria() {
           ...resposta,
         ]);
       });
+
+    // setTimeout(() => {
+    //   setCategorias([
+    //     ...categorias,
+    //     {
+    //       id: 1,
+    //       nome: 'Front End',
+    //       descricao: 'Uma categoria bacanudassa',
+    //       cor: '#cbd1ff',
+    //     },
+    //     {
+    //       id: 2,
+    //       nome: 'Back End',
+    //       descricao: 'Outra categoria bacanudassa',
+    //       cor: '#cbd1ff',
+    //     },
+    //   ]);
+    // }, 4 * 1000);
   }, []);
 
   return (
@@ -55,13 +63,12 @@ function CadastroCategoria() {
           values,
         ]);
 
-        setValues(valoresIniciais);
+        clearForm();
       }}
       >
 
         <FormField
-          label="Categoria"
-          type="text"
+          label="Nome da Categoria"
           name="nome"
           value={values.nome}
           onChange={handleChange}
@@ -83,13 +90,15 @@ function CadastroCategoria() {
           onChange={handleChange}
         />
 
-        <Button>Cadastrar</Button>
+        <Button>
+          Cadastrar
+        </Button>
       </form>
 
       {categorias.length === 0 && (
         <div>
-          {}
-          Carregando...
+          {/* Cargando... */}
+          Loading...
         </div>
       )}
 
